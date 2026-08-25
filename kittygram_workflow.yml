@@ -138,16 +138,20 @@ jobs:
   send_telegram_message:
     name: Notify in Telegram
     runs-on: ubuntu-latest
+    env:
+      TELEGRAM_TO: ${{ secrets.TELEGRAM_TO }}
+      TELEGRAM_TOKEN: ${{ secrets.TELEGRAM_TOKEN }}
     needs:
       - build_backend_and_push_to_docker_hub
       - build_frontend_and_push_to_docker_hub
       - build_gateway_and_push_to_docker_hub
     steps:
       - name: Send success message
+        if: ${{ env.TELEGRAM_TO != '' && env.TELEGRAM_TOKEN != '' }}
         uses: appleboy/telegram-action@master
         with:
-          to: ${{ secrets.TELEGRAM_TO }}
-          token: ${{ secrets.TELEGRAM_TOKEN }}
+          to: ${{ env.TELEGRAM_TO }}
+          token: ${{ env.TELEGRAM_TOKEN }}
           message: >-
             Kittygram images from ${{ github.repository }} were successfully
             built and published to Docker Hub.
