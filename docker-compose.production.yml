@@ -15,7 +15,7 @@ services:
       timeout: 5s
       retries: 5
   backend:
-    build: ./backend/
+    image: dariiyak/kittygram_backend:latest
     env_file: .env
     volumes:
       - static:/backend_static
@@ -30,12 +30,12 @@ services:
       cp -r /app/collected_static/. /backend_static/static/ &&
       gunicorn --bind 0.0.0.0:8000 kittygram_backend.wsgi"
   frontend:
-    build: ./frontend/
+    image: dariiyak/kittygram_frontend:latest
     command: cp -r /app/build/. /static/
     volumes:
       - static:/static
   gateway:
-    build: ./nginx/
+    image: dariiyak/kittygram_gateway:latest
     ports:
       - 9000:80
     volumes:
