@@ -2,8 +2,6 @@ name: Kittygram workflow
 
 on:
   push:
-    branches:
-      - main
 
 jobs:
   backend_tests:
@@ -74,6 +72,7 @@ jobs:
     name: Push backend image to Docker Hub
     runs-on: ubuntu-latest
     needs: backend_tests
+    if: github.ref == 'refs/heads/main'
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -89,12 +88,13 @@ jobs:
         with:
           context: ./backend
           push: true
-          tags: dariiyak/kittygram_backend:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/kittygram_backend:latest
 
   build_frontend_and_push_to_docker_hub:
     name: Push frontend image to Docker Hub
     runs-on: ubuntu-latest
     needs: frontend_tests
+    if: github.ref == 'refs/heads/main'
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -110,7 +110,7 @@ jobs:
         with:
           context: ./frontend
           push: true
-          tags: dariiyak/kittygram_frontend:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/kittygram_frontend:latest
 
   build_gateway_and_push_to_docker_hub:
     name: Push gateway image to Docker Hub
@@ -118,6 +118,7 @@ jobs:
     needs:
       - backend_tests
       - frontend_tests
+    if: github.ref == 'refs/heads/main'
     steps:
       - name: Check out code
         uses: actions/checkout@v4
@@ -133,7 +134,7 @@ jobs:
         with:
           context: ./nginx
           push: true
-          tags: dariiyak/kittygram_gateway:latest
+          tags: ${{ secrets.DOCKER_USERNAME }}/kittygram_gateway:latest
 
   container_smoke_test:
     name: Run Kittygram in Docker Compose
