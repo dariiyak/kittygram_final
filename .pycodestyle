@@ -1,0 +1,4 @@
+[pycodestyle]
+max-line-length = 88
+exclude = backend/cats/migrations
+ignore = E203,E501,W503
